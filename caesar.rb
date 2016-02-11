@@ -1,27 +1,51 @@
 class Caesar
-  def initialize()
-    @rotation = ARGV.first.to_i
-    @message = ARGV[1..last]
-    @map = create_map
+  def initialize
+    @rotation = ARGV[0].to_i
+    @message = ARGV[1..-1]
+    @coded_message = nil
   end
 
-  def translate
-    @message.map do |word|
-      characters = word.chars
-      characters.map do |letter|
-        new_index = cipher.find_index(letter.lowercase)+@rotation
-        @map[new_index]
-      end
+  def create_code
+    @coded_message = @message.map do |word|
+      shift_letters(word)
     end
   end
 
-  def cipher
-    ("a".."z").to_a
+  def print_code
+    puts @coded_message.join(" ")
   end
 
+  def shift_letters(word)
+    letters = word.chars
+    coded_word = letters.map do |letter|
+      ordinal = letter.ord
+      if 97 <= ordinal && ordinal <= 122
+        shift_lower_case(ordinal)
+      elsif 65 <= ordinal && ordinal <= 90
+        shift_upper_case(ordinal)
+      else
+        letter
+      end
+    end.join
+  end
 
+  def shift_lower_case(ordinal)
+    if ordinal + @rotation > 122
+      (96 + (ordinal + @rotation - 122)).chr
+    else
+      (ordinal + @rotation).chr
+    end
+  end
+
+  def shift_upper_case(ordinal)
+    if ordinal + @rotation > 90
+      (64 + (ordinal + @rotation - 90)).chr
+    else
+      (ordinal + @rotation).chr
+    end
+  end
 end
 
-c = Caesar.new
-require 'pry'; binding.pry
-c.translate
+caesar = Caesar.new
+caesar.create_code
+caesar.print_code
